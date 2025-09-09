@@ -16,7 +16,7 @@ class ZorgApp {
             User user = new User(1, name);
             Administration administration = new Administration(user);
 
-            administration.menu();
+            administration.menu(scanner);
         } else  {
             System.out.println("Invalid password!");
         }
