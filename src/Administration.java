@@ -9,6 +9,7 @@ import java.util.Scanner;
  * constructor to the data member 'currentUser'.
  * The patient data is available via the data member currentPatient.
  */
+
 class Administration {
     static final int STOP = 0;
     static final int VIEW = 1;
@@ -19,7 +20,9 @@ class Administration {
     static final int DISPLAY_ALL = 3;
 
     static final int ADD = 1;
-    static final int DELETE = 2;
+    static final int EDITUSER = 2;
+    static final int DELETE = 3;
+
 
     PatientManager patientManager;            // Manages all patients
     User currentUser;               // the current user of the program.
@@ -71,7 +74,7 @@ class Administration {
     }
 
     public void viewPatientMenu(Scanner scanner) {
-
+        Patient foundPatient = null;
         boolean nextCycle = true;
         while (nextCycle) {
             System.out.format("%s\n", "=".repeat(80));
@@ -83,6 +86,7 @@ class Administration {
             int choice = scanner.nextInt();
             scanner.nextLine(); // Clear scanner after choice
             switch (choice) {
+
                 case STOP:
                     nextCycle = false;
                     break;
@@ -90,13 +94,23 @@ class Administration {
                 case SEARCH_BY_ID:
                     System.out.println("Input user ID: ");
                     int patientId = scanner.nextInt();
-                    patientManager.searchPatientId(patientId);
+                    foundPatient = patientManager.searchPatientById(patientId);
+                        if (foundPatient != null) {
+                            foundPatient.viewData();
+                        } else {
+                            System.out.println("Patient not found!");
+                        }
                     break;
+
                 case SEARCH_BY_NAME:
-                
-                    System.out.println("Input first and last name: ");
+                    System.out.println("Input name: ");
                     String patientName = scanner.nextLine();
-                    patientManager.searchPatientName(patientName);
+                    foundPatient = patientManager.searchPatientByName(patientName);
+                    if (foundPatient != null) {
+                        foundPatient.viewData();
+                    } else {
+                        System.out.println("Patient not found!");
+                    }
                     break;
 
                 case DISPLAY_ALL:
@@ -131,12 +145,6 @@ class Administration {
 
     }
 
-    void getDeleteId (Scanner scanner) {
-        System.out.println("User ID: ");
-        int deleteID = scanner.nextInt();
-        patientManager.deletePatient(deleteID);
-    }
-
     public void editPatientMenu(Scanner scanner) {
 
         boolean nextCycle = true;
@@ -144,6 +152,7 @@ class Administration {
             System.out.format("%s\n", "=".repeat(80));
             System.out.format("%d:  RETURN\n", STOP);
             System.out.format("%d:  Add patient\n", ADD);
+            System.out.format("%d:  Edit patient\n", EDITUSER);
             System.out.format("%d:  Delete patient\n", DELETE);
 
             int choice = scanner.nextInt();
@@ -153,12 +162,19 @@ class Administration {
                     nextCycle = false;
 
                     break;
+                case EDITUSER:
+                    System.out.println("Input user ID or Name: ");
+                    String nameOrID = scanner.nextLine();
+                    patientManager.editPatient(nameOrID);
+                    break;
                 case ADD:
                     getNewPatientData(scanner);
 
                     break;
                 case DELETE:
-                    getDeleteId(scanner);
+                    System.out.println("Please enter user ID: ");
+                    int userID = scanner.nextInt();
+                    patientManager.deletePatient(userID);
 
                     break;
             }
