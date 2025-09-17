@@ -65,7 +65,6 @@ public class PatientManager {
 
     Patient searchPatientByName(String patientName) {
         String cleanPatientName = patientName.toLowerCase().replace(" ", "");
-        ArrayList<Patient> partialMatches = new ArrayList<>();
 
        for (Patient p : patients) {
            String searchResult = p.getFirstName() + p.getSurname();
