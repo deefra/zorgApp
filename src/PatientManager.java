@@ -11,9 +11,7 @@ import java.util.Scanner;
 
 public class PatientManager {
 
-    Administration administration;
-    private ArrayList<Patient> patients = new ArrayList<>();
-    Scanner scanner = new Scanner(System.in);
+    private final ArrayList<Patient> patients = new ArrayList<>();
 
     public PatientManager() {
         patients.add(new Patient(1, "Van Puffelen", "Pierre", LocalDate.of(2000, 12, 20), 75.3, 176));
@@ -27,7 +25,7 @@ public class PatientManager {
           System.out.println("Name: " + p.getFirstName() + " " + p.getSurname());
           System.out.println("DOB: " + p.getDateOfBirth());
           System.out.println("Weight(KG): " + p.getWeight());
-          System.out.println("Height(M): " + p.getHeight());
+          System.out.println("Height(CM): " + p.getHeight());
           System.out.println();
 
     }
@@ -59,23 +57,18 @@ public class PatientManager {
             if (p.getId()==id) {
                 return p;
             }
-        }
-        return null;
+        } return null;
     }
 
     Patient searchPatientByName(String patientName) {
         String cleanPatientName = patientName.toLowerCase().replace(" ", "");
-        ArrayList<Patient> partialMatches = new ArrayList<>();
 
        for (Patient p : patients) {
-           String searchResult = p.getFirstName() + p.getSurname();
-           searchResult = searchResult.toLowerCase().replace(" ", "");
+           String searchResult = p.getFirstName().toLowerCase().replace(" ", "") + p.getSurname().toLowerCase().replace(" ", "");
            if (searchResult.equals(cleanPatientName)) {
                return p;
            }
-       }
-
-       return null;
+       } return null;
     }
 
     List<Patient> searchPatientsByPartialName(String partialName) {
@@ -122,7 +115,7 @@ public class PatientManager {
 
             if (Objects.equals(confirmation, delete)) {
                 patients.remove(selectedPatient);
-                System.out.println("Patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname() + "deleted successfully!");
+                System.out.println("Patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname() + " deleted successfully!");
                 return true;
 
             } if (Objects.equals(confirmation, quit)) {
@@ -134,42 +127,47 @@ public class PatientManager {
         }
     }
 
-    void editPatient(Patient selectedPatient) {
-
-        if (selectedPatient != null) {
-            displayPatient(selectedPatient);
-            System.out.format("%s\n", "=".repeat(80));
-            System.out.print("New First Name (press Enter to keep current): ");
-            String newFirst = scanner.nextLine();
-            if (!newFirst.trim().isEmpty()) {
-                selectedPatient.setFirstname(newFirst);
-            }
-
-            System.out.print("New Last Name (press Enter to keep current): ");
-            String newLast = scanner.nextLine();
-            if (!newLast.trim().isEmpty()) {
-                selectedPatient.setSurname(newLast);
-            }
-
-            System.out.print("New date of birth (YY-MM-DD) (press Enter to keep current): ");
-            String newDob = scanner.nextLine();
-            if (!newDob.trim().isEmpty()) {
+    public void editPatient(Patient selectedPatient, Scanner scanner) {
+        if (selectedPatient == null) return;
+        displayPatient(selectedPatient);
+        System.out.format("%s\n", "=".repeat(80));
+//        scanner.nextLine(); // Clear buffer
+        System.out.print("New First Name (press Enter to keep current): ");
+        String newFirst = scanner.nextLine();
+        if (!newFirst.trim().isEmpty()) {
+            selectedPatient.setFirstname(newFirst);
+        }
+        System.out.print("New Last Name (press Enter to keep current): ");
+        String newLast = scanner.nextLine();
+        if (!newLast.trim().isEmpty()) {
+            selectedPatient.setSurname(newLast);
+        }
+        System.out.print("New date of birth (YY-MM-DD) (press Enter to keep current): ");
+        String newDob = scanner.nextLine();
+        if (!newDob.trim().isEmpty()) {
+            try {
                 selectedPatient.setDateofBirth(LocalDate.parse(newDob));
+            } catch (Exception e) {
+                System.out.println("Invalid date format. Keeping current.");
             }
-
-            System.out.print("New Weight(KG)(press Enter to keep current): ");
-            String newWeight = scanner.nextLine();
-            if (!newWeight.trim().isEmpty()) {
+        }
+        System.out.print("New Weight(KG) (press Enter to keep current): ");
+        String newWeight = scanner.nextLine();
+        if (!newWeight.trim().isEmpty()) {
+            try {
                 selectedPatient.setWeight(Double.parseDouble(newWeight));
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid weight. Keeping current.");
             }
-            System.out.print("New Height(M)(press Enter to keep current): ");
-            String newHeight = scanner.nextLine();
-            if (!newHeight.trim().isEmpty()) {
+        }
+        System.out.print("New Height(CM) (press Enter to keep current): ");
+        String newHeight = scanner.nextLine();
+        if (!newHeight.trim().isEmpty()) {
+            try {
                 selectedPatient.setHeight(Integer.parseInt(newHeight));
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid height. Keeping current.");
             }
-
-        } else {
-            System.out.println("Patient not found!");
         }
     }
 }

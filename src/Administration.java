@@ -2,17 +2,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * class Administration represents the core of the application by showing
- * the main menu, from where all other functionality is accessible, either
- * directly or via sub-menus.
- * An Administration instance needs a User as input, which is passed via the
- * constructor to the data member 'currentUser'.
- * The patient data is available via the data member currentPatient.
- */
-
 class Administration {
     static final int STOP = 0;
+    static final int LOGIN = 1;
+    static final int REGISTER = 2;
+
     static final int SELECT_PATIENT = 1;
     static final int DISPLAY_ALL = 2;
 
@@ -21,64 +15,60 @@ class Administration {
     static final int EDIT_PATIENT = 3;
 
     static final int EDIT_SELECTED_PATIENT = 1;
-    static final int DELETE_SELECTED_PATIENT = 2;
+    static final int EDIT_PRESCRIPTIONS = 2;
+    static final int DELETE_SELECTED_PATIENT = 3;
 
+    PatientManager patientManager;
+    MedicationManager medicationManager;
+    UserManager userManager;
+    User currentUser;
 
-    PatientManager patientManager;  // Manages all patients
-    MedicationManager medicationManager; // Manages medication
-    User currentUser;               // the current user of the program.
-
-    /**
-     * Constructor
-     */
-    Administration(User user) {
-        currentUser = user;
+    Administration(Scanner scanner) {
         patientManager = new PatientManager();
         medicationManager = new MedicationManager();
-        System.out.format("Current user: [%d] %s\n", user.getUserID(), user.getUserName());
+        userManager = new UserManager();
+        loginMenu(scanner);
     }
 
-    int makeChoice (Scanner scanner) {
-        System.out.print("enter choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Clear scanner after choice
-        return choice;
-    }
+    void loginMenu (Scanner scanner) {
+        boolean nextCycle = true;
 
-    void getNewPatientData(Scanner scanner) {
+        while (nextCycle) {
+            System.out.format("%s\n", "=".repeat(80));
+            System.out.format("%d:  QUIT\n", STOP);
+            System.out.format("%d:  Login\n", LOGIN);
+            System.out.format("%d:  Register\n", REGISTER);
 
-        System.out.println("=== Add New Patient ===");
-        System.out.print("First name: ");
-        String firstName = scanner.nextLine();
+            int choice = makeChoice(scanner);
 
-        System.out.print("Last name: ");
-        String lastName = scanner.nextLine();
+            switch (choice) {
+                case STOP:
+                    nextCycle = false;
+                    break;
 
-        System.out.print("Date of birth (YY-MM-DD / 2025-01-01): ");
-        String dobString = scanner.nextLine();
-        LocalDate dob = LocalDate.parse(dobString);
-
-        System.out.print("Weight (KG): ");
-        double weight = scanner.nextDouble();
-
-        System.out.print("Height (M): ");
-        int height = scanner.nextInt();
-        scanner.nextLine();
-
-        patientManager.addPatient(lastName, firstName, dob, weight, height);
-        System.out.println("Patient added successfully!");
+                case LOGIN:
+                    currentUser = userManager.loginUser(scanner);
+                    if (currentUser != null) {
+                        menu(scanner, currentUser);
+                    } else {
+                        System.out.println("Wrong password or username!");
+                    }
+                    break;
+            }
+        }
 
     }
 
     private boolean jumpToMainMenu = false;
 
-    void menu (Scanner scanner) {
+    void menu (Scanner scanner, User currentUser) {
         boolean nextCycle = true;
 
         while (nextCycle) {
             jumpToMainMenu = false;
+            System.out.println("Logged in as: " + currentUser.userName);
             System.out.format("%s\n", "=".repeat(80));
-            System.out.format("%d:  QUIT\n", STOP);
+            System.out.format("%d:  LOGOUT\n", STOP);
             System.out.format("%d:  Select patient\n", SELECT_PATIENT);
             System.out.format("%d:  Display all patients\n", DISPLAY_ALL);
 
@@ -113,13 +103,12 @@ class Administration {
         boolean nextCycle = true;
 
         while (nextCycle && !jumpToMainMenu) {
-
             System.out.format("%s\n", "=".repeat(80));
             System.out.println("Selected patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname());
             System.out.format("%d:  RETURN\n", STOP);
-            System.out.format("%d:  Patient data\n", VIEW_PATIENT);
-            System.out.format("%d:  Patient prescriptions\n", VIEW_PRESCRIPTIONS);
-            System.out.format("%d:  Edit patient\n", EDIT_PATIENT);
+            System.out.format("%d:  Display patient data\n", VIEW_PATIENT);
+            System.out.format("%d:  Display Patient prescriptions\n", VIEW_PRESCRIPTIONS);
+            System.out.format("%d:  Edit patient data/prescriptions\n", EDIT_PATIENT);
 
             int choice = makeChoice(scanner);
             switch (choice) {
@@ -144,17 +133,16 @@ class Administration {
         }
     }
 
-
-
-
     public void editPatientMenu(Scanner scanner, Patient selectedPatient) {
 
         boolean nextCycle = true;
         while (nextCycle && !jumpToMainMenu) {
             System.out.format("%s\n", "=".repeat(80));
+            System.out.println("Selected patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname());
             System.out.format("%d:  RETURN\n", STOP);
-            System.out.format("%d:  Edit current patient\n", EDIT_SELECTED_PATIENT);
-            System.out.format("%d:  Delete current patient\n", DELETE_SELECTED_PATIENT);
+            System.out.format("%d:  Edit patient\n", EDIT_SELECTED_PATIENT);
+            System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
+            System.out.format("%d:  Delete selected patient\n", DELETE_SELECTED_PATIENT);
 
             int choice = makeChoice(scanner);
             switch (choice) {
@@ -163,7 +151,11 @@ class Administration {
                     break;
 
                 case EDIT_SELECTED_PATIENT:
-                    patientManager.editPatient(selectedPatient);
+                    patientManager.editPatient(selectedPatient, scanner);
+                    break;
+
+                case EDIT_PRESCRIPTIONS:
+                    medicationManager.editPrescriptions(selectedPatient, scanner);
                     break;
 
                 case DELETE_SELECTED_PATIENT:
@@ -175,4 +167,37 @@ class Administration {
             }
         }
     }
+
+    public static int makeChoice (Scanner scanner) {
+        System.out.print("enter choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Clear scanner after choice
+        return choice;
+    }
+
+    void getNewPatientData(Scanner scanner) {
+
+        System.out.println("=== Add New Patient ===");
+        System.out.print("First name: ");
+        String firstName = scanner.nextLine();
+
+        System.out.print("Last name: ");
+        String lastName = scanner.nextLine();
+
+        System.out.print("Date of birth (YY-MM-DD): ");
+        String dobString = scanner.nextLine();
+        LocalDate dob = LocalDate.parse(dobString);
+
+        System.out.print("Weight (KG): ");
+        double weight = scanner.nextDouble();
+
+        System.out.print("Height (M): ");
+        int height = scanner.nextInt();
+        scanner.nextLine();
+
+        patientManager.addPatient(lastName, firstName, dob, weight, height);
+        System.out.println("Patient " + firstName + lastName + " added successfully!");
+
+    }
+
 }

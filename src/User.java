@@ -1,17 +1,18 @@
+
 class User {
     String userName;
-    int userID;
+    String password;
+    int ID;
+    int role;
 
-    public User(int id, String name) {
-        this.userID = id;
-        this.userName = name;
-    }
-
-    String getUserName() {
-        return userName;
-    }
-
-    int getUserID() {
-        return userID;
+    public User(String userName, String password, int ID, int role) {
+       this.userName = userName;
+       this.password = password;
+       this.ID = ID;
+       this.role = role;
     }
 }
+
+
+
+

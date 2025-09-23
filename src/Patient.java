@@ -12,11 +12,11 @@ class Patient {
 
     // Setters
 
-    public void setFirstname(String name) {name = firstName;}
-    public void setSurname (String lastName) {lastName = surname;}
-    public void setDateofBirth (LocalDate dob) {dob = dateOfBirth;}
-    public void setWeight (Double setWeight) {setWeight = weight;}
-    public void setHeight (int setHeight) {setHeight = height;}
+    public void setFirstname(String name) { firstName = name; }
+    public void setSurname(String lastName) { surname = lastName; }
+    public void setDateofBirth(LocalDate dob) { dateOfBirth = dob; }
+    public void setWeight(Double setWeight) { weight = setWeight; }
+    public void setHeight(int setHeight) { height = setHeight; }
 
     // Getters
 
@@ -67,7 +67,7 @@ class Patient {
         System.out.format("%-17s %s\n", "Date of birth:", dateOfBirth);
         System.out.format("%-17s %s\n", "Age:", getAge());
         System.out.format("%-17s %s\n", "Weight(KG):", weight);
-        System.out.format("%-17s %s\n", "Height(CM):", height);
+        System.out.format("%-17s %s\n", "Height(M):", height);
         System.out.format("%-17s %.1f\n", "BMI:", getBMI()); // %.1f formats BMI from xx.xxxx to xx.x
         System.out.println();
     }

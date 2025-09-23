@@ -12,6 +12,8 @@ public class Prescriptions {
     public int getMedicationId  () {return medicationId;}
     public int getDosage () {return dosage;}
 
+    public void setDosage(int newDosage) {dosage = newDosage;}
+
     Prescriptions(int patientId, int medicationId, int dosage) {
         this.patientId = patientId;
         this.medicationId = medicationId;
