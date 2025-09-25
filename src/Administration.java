@@ -3,20 +3,38 @@ import java.util.List;
 import java.util.Scanner;
 
 class Administration {
+
+    // LOGIN MENU
+
     static final int STOP = 0;
     static final int LOGIN = 1;
     static final int REGISTER = 2;
 
+    // MAIN MENU
+
     static final int SELECT_PATIENT = 1;
-    static final int DISPLAY_ALL = 2;
+    static final int DISPLAY_ALL_PATIENTS = 2;
+    static final int MEDICATION_MENU =3;
+
+    // MEDICATION MENU
+
+    static final int DISPLAY_ALL_MEDICATION = 1;
+    static final int EDIT_MEDICATION = 2;
+    static final int REMOVE_MEDICATION = 3;
+
+    // PATIENT MENU
 
     static final int VIEW_PATIENT = 1;
     static final int VIEW_PRESCRIPTIONS = 2;
     static final int EDIT_PATIENT = 3;
 
-    static final int EDIT_SELECTED_PATIENT = 1;
+    // EDIT PATIENT MENU
+
+    static final int ADD_NEW_PRESCRIPTIONS = 1;
     static final int EDIT_PRESCRIPTIONS = 2;
-    static final int DELETE_SELECTED_PATIENT = 3;
+    static final int DELETE_PRESCRIPTIONS = 3;
+    static final int EDIT_SELECTED_PATIENT = 4;
+    static final int DELETE_SELECTED_PATIENT = 5;
 
     PatientManager patientManager;
     MedicationManager medicationManager;
@@ -70,7 +88,8 @@ class Administration {
             System.out.format("%s\n", "=".repeat(80));
             System.out.format("%d:  LOGOUT\n", STOP);
             System.out.format("%d:  Select patient\n", SELECT_PATIENT);
-            System.out.format("%d:  Display all patients\n", DISPLAY_ALL);
+            System.out.format("%d:  Display all patients\n", DISPLAY_ALL_PATIENTS);
+            System.out.format("%d:  Medication menu\n", MEDICATION_MENU);
 
             int choice = makeChoice(scanner);
 
@@ -92,10 +111,49 @@ class Administration {
                     }
                     break;
 
-                case DISPLAY_ALL:
+                case DISPLAY_ALL_PATIENTS:
                     patientManager.displayAllPatients();
                     break;
+
+                case MEDICATION_MENU:
+                    medicationMenu(scanner);
+                    break;
             }
+        }
+    }
+
+    void medicationMenu (Scanner scanner) {
+        boolean nextCycle = true;
+
+        while(nextCycle && !jumpToMainMenu) {
+            System.out.format("%s\n", "=".repeat(80));
+            System.out.format("%d:  RETURN\n", STOP);
+            System.out.format("%d:  Display all medication\n", DISPLAY_ALL_MEDICATION);
+            System.out.format("%d:  Edit medication\n", EDIT_MEDICATION);
+            System.out.format("%d:  Remove medication\n", REMOVE_MEDICATION);
+
+            int choice = makeChoice(scanner);
+
+            switch (choice) {
+                case STOP:
+                    nextCycle = false;
+                    break;
+
+                case DISPLAY_ALL_MEDICATION:
+                    medicationManager.displayAllMedication();
+                    break;
+
+                case EDIT_MEDICATION:
+                    System.out.print("Enter medication name or ID: ");
+                    String medicationNameOrID = scanner.nextLine();
+                    medicationManager.editMedication(medicationManager.getMedication(medicationNameOrID), scanner);
+                    break;
+
+                case REMOVE_MEDICATION:
+
+                    break;
+            }
+
         }
     }
 
@@ -140,9 +198,11 @@ class Administration {
             System.out.format("%s\n", "=".repeat(80));
             System.out.println("Selected patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname());
             System.out.format("%d:  RETURN\n", STOP);
-            System.out.format("%d:  Edit patient\n", EDIT_SELECTED_PATIENT);
+            System.out.format("%d:  Add prescription\n", ADD_NEW_PRESCRIPTIONS);
             System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
-            System.out.format("%d:  Delete selected patient\n", DELETE_SELECTED_PATIENT);
+            System.out.format("%d:  Delete prescriptions\n", DELETE_PRESCRIPTIONS);
+            System.out.format("%d:  Edit patient\n", EDIT_SELECTED_PATIENT);
+            System.out.format("%d:  Delete patient\n", DELETE_SELECTED_PATIENT);
 
             int choice = makeChoice(scanner);
             switch (choice) {
@@ -154,8 +214,26 @@ class Administration {
                     patientManager.editPatient(selectedPatient, scanner);
                     break;
 
+                case ADD_NEW_PRESCRIPTIONS:
+                    System.out.print("Medication name or ID: ");
+                    String medicationNameOrID = scanner.nextLine();
+                    int medicationID = medicationManager.getMedication(medicationNameOrID).getMedId();
+                    System.out.print("Enter dosage(MG): ");
+                    int dosage = scanner.nextInt();
+                    medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage);
+
+                    break;
+
                 case EDIT_PRESCRIPTIONS:
                     medicationManager.editPrescriptions(selectedPatient, scanner);
+                    break;
+
+                case DELETE_PRESCRIPTIONS:
+                    medicationManager.getPatientPrescription(selectedPatient.getId());
+                    System.out.print("Input medication name: ");
+                    String medicationName = scanner.nextLine();
+                    Medication foundMedication = medicationManager.searchMedicationByName(medicationName);
+                    medicationManager.deletePrescription(selectedPatient.getId(), foundMedication.getMedId());
                     break;
 
                 case DELETE_SELECTED_PATIENT:
@@ -174,30 +252,4 @@ class Administration {
         scanner.nextLine(); // Clear scanner after choice
         return choice;
     }
-
-    void getNewPatientData(Scanner scanner) {
-
-        System.out.println("=== Add New Patient ===");
-        System.out.print("First name: ");
-        String firstName = scanner.nextLine();
-
-        System.out.print("Last name: ");
-        String lastName = scanner.nextLine();
-
-        System.out.print("Date of birth (YY-MM-DD): ");
-        String dobString = scanner.nextLine();
-        LocalDate dob = LocalDate.parse(dobString);
-
-        System.out.print("Weight (KG): ");
-        double weight = scanner.nextDouble();
-
-        System.out.print("Height (M): ");
-        int height = scanner.nextInt();
-        scanner.nextLine();
-
-        patientManager.addPatient(lastName, firstName, dob, weight, height);
-        System.out.println("Patient " + firstName + lastName + " added successfully!");
-
-    }
-
 }

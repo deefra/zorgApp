@@ -1,10 +1,9 @@
-import java.time.LocalDate;
-
 public class Prescriptions {
 
     private int patientId;
     private int medicationId;
     private int dosage;
+    private String comment;
 
     // Getters
 
@@ -14,10 +13,11 @@ public class Prescriptions {
 
     public void setDosage(int newDosage) {dosage = newDosage;}
 
-    Prescriptions(int patientId, int medicationId, int dosage) {
+    Prescriptions(int patientId, int medicationId, int dosage, String comment) {
         this.patientId = patientId;
         this.medicationId = medicationId;
         this.dosage = dosage;
+        this.comment = comment;
     }
 
     static void displayPrescripedMedication(Prescriptions p, MedicationManager medicationManager) {

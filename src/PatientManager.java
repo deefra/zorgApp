@@ -4,19 +4,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-/**
- * PatientManager handles all patient-related operations including
- * storing, retrieving, and managing the collection of patients.
- * */
-
 public class PatientManager {
 
     private final ArrayList<Patient> patients = new ArrayList<>();
 
     public PatientManager() {
-        patients.add(new Patient(1, "Van Puffelen", "Pierre", LocalDate.of(2000, 12, 20), 75.3, 176));
-        patients.add(new Patient(2, "Van Huffelen", "Dierre", LocalDate.of(1980, 12, 5), 99.9, 148));
-        patients.add(new Patient(3, "Van Ruffelen", "Hierre", LocalDate.of(2000, 12, 1), 60.2, 210));
+        patients.add(new Patient(1, "Van Puffelen", "Pierre", LocalDate.of(2000, 12, 20), 75.3, 176, 4.5));
+        patients.add(new Patient(2, "Van Huffelen", "Dierre", LocalDate.of(1980, 12, 5), 99.9, 148, 4.5));
+        patients.add(new Patient(3, "Van Ruffelen", "Hierre", LocalDate.of(2000, 12, 1), 60.2, 210, 4.5));
     }
 
     void displayPatient(Patient p) {
@@ -91,14 +86,14 @@ public class PatientManager {
         } else {
             System.out.println("Patients found:");
             for (Patient p : partialResults) {
-                System.out.println(p.getFirstName() + " " + p.getSurname() + " | DOB: " + p.getDateOfBirth() + " | ID: " + p.getId());
+                System.out.println("ID: " + p.getId() + " | " + p.getFirstName() + " " + p.getSurname() + " | DOB: " + p.getDateOfBirth());
             }
         }
     }
 
-    void addPatient(String lastName, String firstName, LocalDate dob, double weight, int height) {
+    void addPatient(String lastName, String firstName, LocalDate dob, double weight, int height, Double lungVolume) {
         int ID = patients.size() + 1;
-        patients.add(new Patient(ID, lastName, firstName, dob, weight, height));
+        patients.add(new Patient(ID, lastName, firstName, dob, weight, height, lungVolume));
     }
 
     boolean deletePatient (Scanner scanner, Patient selectedPatient) {
@@ -117,7 +112,6 @@ public class PatientManager {
                 patients.remove(selectedPatient);
                 System.out.println("Patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname() + " deleted successfully!");
                 return true;
-
             } if (Objects.equals(confirmation, quit)) {
                 return false;
             } else {
@@ -169,5 +163,33 @@ public class PatientManager {
                 System.out.println("Invalid height. Keeping current.");
             }
         }
+    }
+
+    void getNewPatientData(Scanner scanner) {
+
+        System.out.println("=== Add New Patient ===");
+        System.out.print("First name: ");
+        String firstName = scanner.nextLine();
+
+        System.out.print("Last name: ");
+        String lastName = scanner.nextLine();
+
+        System.out.print("Date of birth (YY-MM-DD): ");
+        String dobString = scanner.nextLine();
+        LocalDate dob = LocalDate.parse(dobString);
+
+        System.out.print("Weight (KG): ");
+        double weight = scanner.nextDouble();
+
+        System.out.print("Height (M): ");
+        int height = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Lung volume (L): ");
+        double lungVolume = scanner.nextDouble();
+
+        addPatient(lastName, firstName, dob, weight, height, lungVolume);
+        System.out.println("Patient " + firstName + lastName + " added successfully!");
+
     }
 }
