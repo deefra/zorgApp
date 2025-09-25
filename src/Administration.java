@@ -220,7 +220,8 @@ class Administration {
                     int medicationID = medicationManager.getMedication(medicationNameOrID).getMedId();
                     System.out.print("Enter dosage(MG): ");
                     int dosage = scanner.nextInt();
-                    medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage);
+                    String comment = "";
+                    medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment);
 
                     break;
 
