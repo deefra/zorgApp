@@ -24,6 +24,11 @@ public class Prescriptions {
         System.out.println();
         System.out.println("Medication: " + medicationManager.getMedicationName(p.getMedicationId()));
         System.out.println("Dosage(MG): " + p.dosage);
+
+        if (!p.comment.isEmpty()) {
+            System.out.println("Comment: " + p.comment);
+        }
+
         System.out.println();
     }
 }

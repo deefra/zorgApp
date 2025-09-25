@@ -11,9 +11,9 @@ public class MedicationManager {
         medications.add(new Medication(2, "Ketamine", 100));
         medications.add(new Medication(3, "Xanax", 100));
 
-        prescriptions.add(new Prescriptions(1, 1, 300, ""));
+        prescriptions.add(new Prescriptions(1, 1, 300, "If you tweak, take a leak."));
         prescriptions.add(new Prescriptions(1, 2, 150, ""));
-        prescriptions.add(new Prescriptions(2, 3, 100, ""));
+        prescriptions.add(new Prescriptions(2, 3, 100, "First dosage in the morning when you wake up. Second dosage when you go to sleep in the evening."));
     }
 
     Medication getMedication (String medicationNameOrID) {
