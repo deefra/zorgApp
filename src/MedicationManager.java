@@ -31,24 +31,21 @@ public class MedicationManager {
 
     void editMedication(Medication medication, Scanner scanner) {
         medication.viewMedication();
-        System.out.print("New name (press enter to keep current): ");
+        System.out.print("New name(press enter to keep current): ");
         String newName = scanner.nextLine();
         if (!newName.trim().isEmpty()) {
             medication.setMedName(newName);
         }
-        System.out.print("New quantity: ");
-        int newQuantity;
+        System.out.print("New quantity(press enter to keep current): ");
+        String newQuantity = scanner.nextLine();
         try {
-            newQuantity = scanner.nextInt();
-            scanner.nextLine();
-            if (newQuantity >= 0) {
-                medication.setMedQuantity(newQuantity);
+            if (!newQuantity.trim().isEmpty()) {
+                medication.setMedQuantity(Integer.parseInt(newQuantity));
+                System.out.println("Medication updated successfully!");
             }
         } catch (Exception e) {
-            System.out.println("Invalid quantity input. Keeping current.");
-            scanner.nextLine();
+            System.out.println("Invalid quantity input, keeping current...");
         }
-        System.out.println("Medication updated successfully!");
     }
 
     String getMedicationName(int medicationId) {
@@ -105,16 +102,29 @@ public class MedicationManager {
             }
         }
 
-        int choice = Administration.makeChoice(scanner);
+        boolean found = false;
 
-        for (Prescriptions p: patientPrescriptions) {
-            if (p.getMedicationId() == choice) {
-                System.out.print("Enter new dosage(MG): ");
-                int newDosage = scanner.nextInt();
-                p.setDosage(newDosage);
-                System.out.println("Dosage successfully updated!");
+        try {
+            int choice = Administration.makeChoice(scanner);
+            for (Prescriptions p: patientPrescriptions) {
+                if (p.getMedicationId() == choice) {
+                    System.out.print("Enter new dosage(MG): ");
+                    int newDosage = scanner.nextInt();
+                    p.setDosage(newDosage);
+                    System.out.println("Dosage successfully updated!");
+                    found = true;
+                }
             }
+            if (!found) {
+                System.out.println("Invalid choice!");
+            }
+        } catch (Exception e) {
+            System.out.println("Error! Make sure your input is valid!");
+            scanner.nextLine(); // Clear scanner after choice
+
         }
+
+
     }
 
     void deletePrescription (int patientId, int medicationId) {

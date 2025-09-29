@@ -54,7 +54,7 @@ class Patient {
         System.out.format("===== Patient id=%d ==============================\n", id);
         System.out.println();
         System.out.format("%-17s %s\n", "Surname:", surname);
-        System.out.format("%-17s %s\n", "firstName:", firstName);
+        System.out.format("%-17s %s\n", "first name:", firstName);
         System.out.format("%-17s %s\n", "Date of birth:", dateOfBirth);
         System.out.format("%-17s %s\n", "Age:", getAge());
         System.out.format("%-17s %s\n", "Weight(KG):", weight);

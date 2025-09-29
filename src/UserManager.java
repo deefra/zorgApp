@@ -6,7 +6,7 @@ public class UserManager {
     private final ArrayList<User> users = new ArrayList<>();
 
     public UserManager () {
-        users.add(new User ("Admin", "Admin", 1, 3));
+        users.add(new User ("admin", "admin", 1, 3));
         users.add(new User("Ben Huisarts", "1234", 2, 0));
         users.add(new User("Ben Apotheker", "1234", 3, 0));
         users.add(new User("Ben Tandarts", "1234", 4, 0));

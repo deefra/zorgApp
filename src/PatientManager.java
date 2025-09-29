@@ -9,9 +9,9 @@ public class PatientManager {
     private final ArrayList<Patient> patients = new ArrayList<>();
 
     public PatientManager() {
-        patients.add(new Patient(1, "Van Puffelen", "Pierre", LocalDate.of(2000, 12, 20), 75.3, 176, 4.5));
-        patients.add(new Patient(2, "Van Huffelen", "Dierre", LocalDate.of(1980, 12, 5), 99.9, 148, 4.5));
-        patients.add(new Patient(3, "Van Ruffelen", "Hierre", LocalDate.of(2000, 12, 1), 60.2, 210, 4.5));
+        patients.add(new Patient(1, "van Puffelen", "Pierre", LocalDate.of(2000, 12, 20), 75.3, 176, 4.5));
+        patients.add(new Patient(2, "van Huffelen", "Dierre", LocalDate.of(1980, 12, 5), 99.9, 148, 4.5));
+        patients.add(new Patient(3, "van Ruffelen", "Hierre", LocalDate.of(2000, 12, 1), 60.2, 210, 4.5));
     }
 
     void displayPatient(Patient p) {
@@ -82,7 +82,7 @@ public class PatientManager {
 
     public void displayPartialMatches(List<Patient> partialResults) {
         if (partialResults.isEmpty()) {
-            System.out.println("No patients found.");
+            System.out.println("No patients found!");
         } else {
             System.out.println("Patients found:");
             for (Patient p : partialResults) {
