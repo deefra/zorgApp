@@ -72,7 +72,9 @@ class Administration {
             System.out.format("%d:  LOGOUT\n", STOP);
             System.out.format("%d:  Select patient\n", SELECT_PATIENT);
             System.out.format("%d:  Display all patients\n", DISPLAY_ALL_PATIENTS);
-            System.out.format("%d:  Medication menu\n", MEDICATION_MENU);
+            if (currentUser.getRole() >= 2) {
+                System.out.format("%d:  Medication menu\n", MEDICATION_MENU);
+            }
             int choice = makeChoice(scanner);
             switch (choice) {
                 case STOP:
@@ -83,7 +85,7 @@ class Administration {
                     String searchInput = scanner.nextLine();
                     Patient foundPatient = patientManager.getPatient(searchInput);
                     if (foundPatient != null) {
-                        patientMenu(scanner, foundPatient);
+                        patientMenu(scanner, foundPatient, currentUser);
                     } else {
                         List<Patient> foundPatientList = patientManager.searchPatientsByPartialName(searchInput);
                         patientManager.displayPartialMatches(foundPatientList);
@@ -93,13 +95,15 @@ class Administration {
                     patientManager.displayAllPatients();
                     break;
                 case MEDICATION_MENU:
-                    medicationMenu(scanner);
+                    if (currentUser.getRole() >= 2) {
+                        medicationMenu(scanner, currentUser);
+                    }
                     break;
             }
         }
     }
 
-    void medicationMenu (Scanner scanner) {
+    void medicationMenu (Scanner scanner, User currentUser) {
         boolean nextCycle = true;
         while(nextCycle && !jumpToMainMenu) {
             System.out.format("%s\n", "=".repeat(80));
@@ -107,6 +111,7 @@ class Administration {
             System.out.format("%d:  Display all medication\n", DISPLAY_ALL_MEDICATION);
             System.out.format("%d:  Edit medication\n", EDIT_MEDICATION);
             System.out.format("%d:  Remove medication\n", REMOVE_MEDICATION);
+
             int choice = makeChoice(scanner);
             switch (choice) {
                 case STOP:
@@ -131,7 +136,7 @@ class Administration {
         }
     }
 
-    void patientMenu (Scanner scanner, Patient selectedPatient) {
+    void patientMenu (Scanner scanner, Patient selectedPatient, User currentUser) {
         boolean nextCycle = true;
         while (nextCycle && !jumpToMainMenu) {
             System.out.format("%s\n", "=".repeat(80));
@@ -150,27 +155,29 @@ class Administration {
                     break;
                 case VIEW_PRESCRIPTIONS:
                     System.out.println();
-                    medicationManager.getPatientPrescription(selectedPatient.getId());
+                    medicationManager.getPatientPrescription(selectedPatient.getId(), currentUser);
                     break;
                 case EDIT_PATIENT:
-                    editPatientMenu(scanner, selectedPatient);
+                    editPatientMenu(scanner, selectedPatient, currentUser);
                     break;
             }
         }
     }
 
-    public void editPatientMenu(Scanner scanner, Patient selectedPatient) {
+    public void editPatientMenu(Scanner scanner, Patient selectedPatient, User currentUser) {
         boolean nextCycle = true;
         while (nextCycle && !jumpToMainMenu) {
             System.out.format("%s\n", "=".repeat(80));
             System.out.println("Selected patient: " + selectedPatient.getFirstName() + " " + selectedPatient.getSurname());
             System.out.format("%d:  RETURN\n", STOP);
-            System.out.format("%d:  Add prescription\n", ADD_NEW_PRESCRIPTIONS);
-            System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
-            System.out.format("%d:  Delete prescriptions\n", DELETE_PRESCRIPTIONS);
-            System.out.println();
             System.out.format("%d:  Edit patient\n", EDIT_SELECTED_PATIENT);
             System.out.format("%d:  Delete patient\n", DELETE_SELECTED_PATIENT);
+            if (currentUser.getRole() >= 3) {
+                System.out.println();
+                System.out.format("%d:  Add prescription\n", ADD_NEW_PRESCRIPTIONS);
+                System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
+                System.out.format("%d:  Delete prescriptions\n", DELETE_PRESCRIPTIONS);
+            }
             int choice = makeChoice(scanner);
             switch (choice) {
                 case STOP:
@@ -194,10 +201,12 @@ class Administration {
                         try {
                             System.out.print("Enter dosage(MG): ");
                             int dosage = scanner.nextInt();
+                            scanner.nextLine(); // Clear scanner
                             String comment = "";
-                            medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment);
+                            boolean narcotic = true;
+                            medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment, narcotic);
                         } catch (Exception e) {
-                            System.out.println("Please enter a valid dosage in MG!");
+                            System.out.println("Please enter a valid input!");
                             scanner.nextLine(); // Clear buffer
                         }
                     }
@@ -206,7 +215,7 @@ class Administration {
                     medicationManager.editPrescriptions(selectedPatient, scanner);
                     break;
                 case DELETE_PRESCRIPTIONS:
-                    medicationManager.getPatientPrescription(selectedPatient.getId());
+                    medicationManager.getPatientPrescription(selectedPatient.getId(), currentUser);
                     System.out.print("Input medication name: ");
                     String medicationName = scanner.nextLine();
                     Medication foundMedication = medicationManager.searchMedicationByName(medicationName);

@@ -6,10 +6,11 @@ public class UserManager {
     private final ArrayList<User> users = new ArrayList<>();
 
     public UserManager () {
-        users.add(new User ("admin", "admin", 1, 3));
-        users.add(new User("Ben Huisarts", "1234", 2, 0));
-        users.add(new User("Ben Apotheker", "1234", 3, 0));
-        users.add(new User("Ben Tandarts", "1234", 4, 0));
+        users.add(new User ("admin", "admin", 1, 4));
+        users.add(new User("Ben Huisarts", "1234", 2, 3));
+        users.add(new User("Ben Apotheker", "1234", 3, 2));
+        users.add(new User("Ben Tandarts", "1234", 4, 1));
+        users.add(new User("Ben Fysio", "1234", 5, 0));
     }
 
     User loginUser (Scanner scanner) {

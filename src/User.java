@@ -10,6 +10,8 @@ class User {
        this.ID = ID;
        this.role = role;
     }
+
+    public int getRole () {return role;}
 }
 
 

@@ -11,9 +11,9 @@ public class MedicationManager {
         medications.add(new Medication(2, "Ketamine", 100));
         medications.add(new Medication(3, "Xanax", 100));
 
-        prescriptions.add(new Prescriptions(1, 1, 300, "If you tweak, take a leak."));
-        prescriptions.add(new Prescriptions(1, 2, 150, ""));
-        prescriptions.add(new Prescriptions(2, 3, 100, "First dosage in the morning when you wake up. Second dosage when you go to sleep in the evening."));
+        prescriptions.add(new Prescriptions(1, 1, 300, "If you tweak, take a leak.", false));
+        prescriptions.add(new Prescriptions(1, 2, 150, "", true));
+        prescriptions.add(new Prescriptions(2, 3, 100, "First dosage in the morning when you wake up. Second dosage when you go to sleep in the evening.", true));
     }
 
     Medication getMedication (String medicationNameOrID) {
@@ -80,16 +80,16 @@ public class MedicationManager {
         } return null;
     }
 
-    void getPatientPrescription (int id) {
+    void getPatientPrescription (int id, User currentUser) {
         for (Prescriptions p : prescriptions) {
-            if (p.getPatientId() == id) {
+            if (p.getPatientId() == id && currentUser.getRole() >= 2 || p.getPatientId() == id && p.getNarcoticStatus()) {
                 Prescriptions.displayPrescripedMedication(p, this);
             }
         }
     }
 
-    void addPrescriptions(int patientId, int medicationId, int dosage, String comment) {
-        prescriptions.add(new Prescriptions(patientId, medicationId, dosage, comment));
+    void addPrescriptions(int patientId, int medicationId, int dosage, String comment, boolean narcotic) {
+        prescriptions.add(new Prescriptions(patientId, medicationId, dosage, comment, narcotic));
     }
 
     void editPrescriptions(Patient selectedPatient, Scanner scanner) {
@@ -110,8 +110,12 @@ public class MedicationManager {
                 if (p.getMedicationId() == choice) {
                     System.out.print("Enter new dosage(MG): ");
                     int newDosage = scanner.nextInt();
+                    scanner.nextLine(); // Clear scanner
                     p.setDosage(newDosage);
                     System.out.println("Dosage successfully updated!");
+                    System.out.print("Enter new comment: ");
+                    String newComment = scanner.nextLine();
+                    p.setComment(newComment);
                     found = true;
                 }
             }
