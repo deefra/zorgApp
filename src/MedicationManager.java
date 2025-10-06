@@ -92,7 +92,7 @@ public class MedicationManager {
         prescriptions.add(new Prescriptions(patientId, medicationId, dosage, comment, narcotic));
     }
 
-    void editPrescriptions(Patient selectedPatient, Scanner scanner) {
+    void editPrescriptions(Patient selectedPatient, Scanner scanner, User currentUser) {
         ArrayList<Prescriptions> patientPrescriptions = new ArrayList<>();
         if (selectedPatient == null) return;
         for(Prescriptions p: prescriptions) {
@@ -108,15 +108,23 @@ public class MedicationManager {
             int choice = Administration.makeChoice(scanner);
             for (Prescriptions p: patientPrescriptions) {
                 if (p.getMedicationId() == choice) {
-                    System.out.print("Enter new dosage(MG): ");
-                    int newDosage = scanner.nextInt();
-                    scanner.nextLine(); // Clear scanner
-                    p.setDosage(newDosage);
-                    System.out.println("Dosage successfully updated!");
-                    System.out.print("Enter new comment: ");
-                    String newComment = scanner.nextLine();
-                    p.setComment(newComment);
-                    found = true;
+                    if (currentUser.getRole() >= 2) {
+                        System.out.print("Enter new dosage(MG): ");
+                        int newDosage = scanner.nextInt();
+                        scanner.nextLine(); // Clear scanner
+                        p.setDosage(newDosage);
+                        System.out.println("Dosage successfully updated!");
+                        System.out.print("Enter new comment: ");
+                        String newComment = scanner.nextLine();
+                        p.setComment(newComment);
+                        found = true;
+                    } else {
+                        System.out.print("Enter new comment: ");
+                        String newComment = scanner.nextLine();
+                        p.setComment(newComment);
+                        System.out.println("Comment updated!");
+                        found = true;
+                    }
                 }
             }
             if (!found) {
@@ -125,7 +133,6 @@ public class MedicationManager {
         } catch (Exception e) {
             System.out.println("Error! Make sure your input is valid!");
             scanner.nextLine(); // Clear scanner after choice
-
         }
 
 

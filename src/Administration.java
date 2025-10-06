@@ -175,9 +175,9 @@ class Administration {
             if (currentUser.getRole() >= 3) {
                 System.out.println();
                 System.out.format("%d:  Add prescription\n", ADD_NEW_PRESCRIPTIONS);
-                System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
                 System.out.format("%d:  Delete prescriptions\n", DELETE_PRESCRIPTIONS);
             }
+            System.out.format("%d:  Edit prescriptions\n", EDIT_PRESCRIPTIONS);
             int choice = makeChoice(scanner);
             switch (choice) {
                 case STOP:
@@ -199,12 +199,23 @@ class Administration {
                     }
                     if(medicationFound) {
                         try {
+                            String comment = "";
+
                             System.out.print("Enter dosage(MG): ");
                             int dosage = scanner.nextInt();
                             scanner.nextLine(); // Clear scanner
-                            String comment = "";
-                            boolean narcotic = true;
-                            medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment, narcotic);
+
+                            System.out.print("Is this mediation a narcotic?(Yes/No): ");
+                            String narcoticInput = scanner.nextLine();
+
+                            if (narcoticInput.toLowerCase().trim().equals("yes")) {
+                                medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment, true);
+                            } else if (narcoticInput.toLowerCase().trim().equals("no")) {
+                                medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment, false);
+                            } else {
+                                medicationManager.addPrescriptions(selectedPatient.getId(), medicationID, dosage, comment, false);
+                            }
+
                         } catch (Exception e) {
                             System.out.println("Please enter a valid input!");
                             scanner.nextLine(); // Clear buffer
@@ -212,7 +223,7 @@ class Administration {
                     }
                     break;
                 case EDIT_PRESCRIPTIONS:
-                    medicationManager.editPrescriptions(selectedPatient, scanner);
+                    medicationManager.editPrescriptions(selectedPatient, scanner, currentUser);
                     break;
                 case DELETE_PRESCRIPTIONS:
                     medicationManager.getPatientPrescription(selectedPatient.getId(), currentUser);
@@ -244,7 +255,6 @@ class Administration {
                scanner.nextLine();
                System.out.println("Not an option try again");
            }
-
        }
         return choice;
     }
